@@ -1,0 +1,7 @@
+displayName: "Universe Mod"
+name: "universe-mod"
+author: "JiuAn"
+main: "universe.Universe"
+description: "A new story to witness its growth"
+version: 0.0.1
+minGameVersion: 146
