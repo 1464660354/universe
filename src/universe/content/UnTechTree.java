@@ -12,6 +12,7 @@ public class UnTechTree {
 
     public static void load() {
         TechTree.TechNode root = TechTree.nodeRoot("universe", universeCore, () -> {
+            TechTree.node(UnBlocks.plasmaCannon, () -> {});
             TechTree.node(UnBlocks.bronzerSmelter, () -> {
                 TechTree.node(UnBlocks.bronzeAncientCannon);
                 TechTree.node(UnBlocks.bronzerWall, () -> {
