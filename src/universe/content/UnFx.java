@@ -64,7 +64,12 @@ public class UnFx {
             Fill.circle(e.x, e.y, e.rotation * e.fout());
         }),
 
-        hyperPlasia = new Effect(60f, e -> {}),
+        hyperPlasia = new Effect(60f, e -> {
+            color(Color.valueOf("98FB98"), Color.valueOf("32CD32"), e.fin());
+            randLenVectors(e.id, 3, 2f + e.fin() * 7f, (x, y) -> {
+                Fill.circle(e.x + x, e.y + y, 0.1f + e.fout() * 1.4f);
+            });
+        }),
 
         plasmahit = new Effect(120, e -> {
             color(Color.valueOf("96CDCD"), Color.valueOf("668B8B"), e.fin());
@@ -91,5 +96,5 @@ public class UnFx {
             }
         }),
 
-    none = new Effect(0, 0f, e -> {});
+        none = new Effect(0, 0f, e -> {});
 }

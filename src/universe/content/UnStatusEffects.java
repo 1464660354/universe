@@ -33,7 +33,7 @@ public class UnStatusEffects {
             color = Color.valueOf("dba9e0");
             damage = 0.1f;
             effect = UnFx.hyperPlasia;
-            transitionDamage = 1f;
+            transitionDamage = 20f;
 
             init(() -> {
                 opposite(burning,freezing,tarred);
@@ -41,12 +41,12 @@ public class UnStatusEffects {
                 affinity(wet, (unit, result, time) -> {
                     unit.damagePierce(transitionDamage);
                     UnFx.hyperPlasia.at(unit.x + Mathf.range(unit.bounds() / 2f), unit.y + Mathf.range(unit.bounds() / 2f));
-                    result.set(tetanus, Math.min(time + result.time, 60f));
+                    result.set(tetanus, Math.min(time + result.time, 600f));
                 });
                 affinity(shocked, (unit, result, time) -> {
                     unit.damagePierce(transitionDamage);
                     UnFx.hyperPlasia.at(unit.x + Mathf.range(unit.bounds() / 2f), unit.y + Mathf.range(unit.bounds() / 2f));
-                    result.set(tetanus, Math.min(time + result.time, 60f));
+                    result.set(tetanus, Math.min(time + result.time, 600f));
                 });
             });
         }};

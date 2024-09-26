@@ -14,6 +14,7 @@ import mindustry.entities.bullet.BulletType;
 import mindustry.entities.bullet.LightningBulletType;
 import mindustry.entities.effect.MultiEffect;
 import mindustry.entities.part.RegionPart;
+import mindustry.entities.pattern.ShootAlternate;
 import mindustry.gen.Sounds;
 import mindustry.graphics.Drawf;
 import mindustry.graphics.Pal;
@@ -22,6 +23,7 @@ import mindustry.type.StatusEffect;
 import mindustry.world.blocks.defense.Wall;
 import mindustry.world.blocks.defense.turrets.ItemTurret;
 import mindustry.world.blocks.environment.OreBlock;
+import mindustry.world.blocks.production.Drill;
 import mindustry.world.blocks.production.GenericCrafter;
 import mindustry.world.blocks.storage.CoreBlock;
 import mindustry.world.consumers.ConsumeLiquid;
@@ -37,11 +39,16 @@ import universe.content.UnItems;
 
 import static arc.graphics.g2d.Draw.color;
 import static mindustry.content.UnitTypes.alpha;
+import static mindustry.type.ItemStack.with;
 
 public class UnBlocks {
     public static Block
             //region ore
             oreAurum,
+            //endregion
+
+            //region production
+            bronzeDrillBit,
             //endregion
 
             //region wall
@@ -53,7 +60,7 @@ public class UnBlocks {
             //endregion
 
             //region turret
-            bronzeAncientCannon,plasmaCannon,
+            bronzeAncientCannon,plasmaCannon,proliferationCannon,
             //endregion
 
             //region core
@@ -63,19 +70,34 @@ public class UnBlocks {
     //load
     public static void load(){
         //region ore
-        oreAurum = new OreBlock(UnItems.aurum){{
-            oreDefault = true;
-            oreThreshold = 0.864f;
-            oreScale = 24.904762f;
-      }};
-        //endregion 矿石
+//        oreAurum = new OreBlock(UnItems.aurum){{
+//            oreDefault = true;
+//            oreThreshold = 0.864f;
+//            oreScale = 24.904762f;
+//      }};
+        //endregion ore
+
+        //region production
+        bronzeDrillBit = new Drill("bronze-drill-bit"){{
+            requirements(Category.production, with
+                    (new Object[]{UnItems.bronzer, 10}));
+            tier = 3;
+            drillTime = 400;
+            size = 2;
+            itemCapacity = 15;
+            envEnabled ^= Env.space;
+            consumeLiquid(Liquids.water, 0.05f).boost();
+            researchCost = with(new Object[]{UnItems.bronzer, 10});
+        }};
+
+        //endregion production
 
         //region wall
 
         int wallHealthMultiplier = 4;
 
         bronzerWall = new Wall("bronzer-wall"){{
-            requirements(Category.defense, ItemStack.with
+            requirements(Category.defense, with
                     (new Object[]{UnItems.bronzer, 10}));
             health = 95 * wallHealthMultiplier;
             size = 1;
@@ -84,7 +106,7 @@ public class UnBlocks {
             envDisabled |= Env.scorching;
         }};
         bronzerWallLarge = new Wall("large-bronzer-wall"){{
-            requirements(Category.defense, ItemStack.with
+            requirements(Category.defense, with
                     (new Object[]{UnItems.bronzer, 40}));
             health = 95 * 4 * wallHealthMultiplier;
             size = 2;
@@ -96,7 +118,7 @@ public class UnBlocks {
 
         //region smelter
         bronzerSmelter = new GenericCrafter("bronzer-smelter"){{
-            requirements(Category.crafting, ItemStack.with(
+            requirements(Category.crafting, with(
                     Items.copper, 20, Items.lead, 30));
             craftEffect = Fx.smeltsmoke;
             outputItem = new ItemStack(UnItems.bronzer, 1);
@@ -108,7 +130,7 @@ public class UnBlocks {
             //ambientSound = Sounds.smelter;
             //ambientSoundVolume = 0.09f;
 
-            consumeItems(ItemStack.with(Items.copper, 2, Items.lead, 1));
+            consumeItems(with(Items.copper, 2, Items.lead, 1));
             consumePower(0.30f);//0.30*60f=18power/s
             researchCostMultiplier = 0.1f;
             envDisabled |= Env.scorching;
@@ -117,7 +139,7 @@ public class UnBlocks {
 
         //region turret
         bronzeAncientCannon = new ItemTurret("bronze-ancient-cannon"){{
-            requirements(Category.turret, ItemStack.with
+            requirements(Category.turret, with
                     (new Object[]{UnItems.bronzer, 50}));
             ammo(
                     UnItems.bronzer, new ArtilleryBulletType(2f, 40){{
@@ -140,6 +162,7 @@ public class UnBlocks {
                         trailEffect = UnFx.bronzerIncendTrail; // 炮弹轨迹效果
                     }}
             );
+            //shoot = new ShootAlternate(50f);炮口偏移
             drawer = new DrawTurret("reinforced-"){{
                 parts.addAll(
                         new RegionPart("-end"){{
@@ -160,15 +183,17 @@ public class UnBlocks {
                         }}
                 );
             }};
-            // 配置炮塔的基本属性
             size = 3; // 尺寸
             targetAir = false; // 是否攻击空中目标
             reload = 300f; // 重新装填时间
+            ammoPerShot = 3;
             recoil = 4f; // 后坐力
             range = 280f; // 射程
             inaccuracy = 1f; // 不准确性
-            //shootCone = 5f;
+            shootCone = 5f;//射击角度判定
             health = 400; // 生命值
+            rotateSpeed = 4f; // 转向速度
+            itemCapacity = 9; // 弹药容量
             shootEffect = UnFx.bronzerFire; // 射击效果
             shootSound = Sounds.bang; // 射击声音
             //coolant = consumeCoolant(0.1f);
@@ -178,7 +203,7 @@ public class UnBlocks {
         }};
 
         plasmaCannon = new ItemTurret("plasma-cannon") {{
-            requirements(Category.turret, ItemStack.with
+            requirements(Category.turret, with
                     (Items.copper, 80, Items.graphite, 50, Items.titanium, 20));
             ammo(
                     Items.copper,  new BasicBulletType(2.8f, 15){{
@@ -189,15 +214,15 @@ public class UnBlocks {
                         lifetime = 120f;
                         homingPower = 0.05f;
                         homingRange = 24f;
-                        ammoMultiplier = 3;
+                        ammoMultiplier = 1;
                         statusDuration = 60f;
-                        frontColor = Color.valueOf("96CDCD"); // 前景颜色
-                        backColor = Color.valueOf("668B8B"); // 背景颜色
+                        frontColor = Color.valueOf("96CDCD");
+                        backColor = Color.valueOf("668B8B");
                         makeFire = false;
-                        trailRotation = true;//轨迹旋转
-                        trailInterval = 3f;//轨迹间隔
-                        trailEffect = UnFx.plasmatrail;// 炮弹轨迹效果
-                        hitEffect = UnFx.plasmahit;// 命中效果
+                        trailRotation = true;
+                        trailInterval = 3f;
+                        trailEffect = UnFx.plasmatrail;
+                        hitEffect = UnFx.plasmahit;
                         intervalBullet = new LightningBulletType(){{
                         damage = 3;
                         collidesAir = false;
@@ -207,9 +232,9 @@ public class UnBlocks {
                         lightningLengthRand = 5;
                         buildingDamageMultiplier = 0.1f;
                         lightningType = new BulletType(0.0001f, 0f){{
-                            lifetime = Fx.lightning.lifetime;// 闪电的生命期
-                            despawnEffect = Fx.none;// 闪电的消散效果
-                            status = StatusEffects.shocked;// 闪电的状态效果
+                            lifetime = Fx.lightning.lifetime;
+                            despawnEffect = Fx.none;
+                            status = StatusEffects.shocked;
                             statusDuration = 1f;
                             hittable = false;
                             lightColor = Color.white;
@@ -221,22 +246,23 @@ public class UnBlocks {
             drawer = new DrawTurret("reinforced-"){{
                 parts.addAll(
                         new RegionPart("-side"){{
-                    progress = PartProgress.warmup;
-                    moveX = 0.6f;
-                    moveRot = -15f;
-                    mirror = true;
-                    layerOffset = 0.001f;
-                    moves.add(new PartMove(PartProgress.recoil, 0.5f, -0.5f, -8f));
-                }},
+                        progress = PartProgress.warmup;
+                        moveX = 0.6f;
+                        moveRot = -15f;
+                        mirror = true;
+                        layerOffset = 0.001f;
+                        moves.add(new PartMove(PartProgress.recoil, 0.5f, -0.5f, -8f));
+                    }},
                         new RegionPart("-barrel"){{
-                    progress = PartProgress.recoil;
-                    moveY = -2.5f;
-                }});
-            }};
+                        progress = PartProgress.recoil;
+                        moveY = -2.5f;
+                    }});
+                }};
 
             size = 2;
             range = 240f;
             reload = 90f;
+            ammoPerShot = 2;
             consumeAmmoOnce = false;
             inaccuracy = 1f;
             ammoEjectBack = 4f;
@@ -244,21 +270,67 @@ public class UnBlocks {
             shake = 1.2f;
             shoot.shots = 5;
             shoot.shotDelay = 3f;
-            ammoUseEffect = Fx.casing2;// 弹药使用效果
+            itemCapacity = 15;
+            ammoUseEffect = Fx.casing2;
             scaledHealth = 100;
-            smokeEffect = UnFx.plasmaSmoke;// 射击烟雾效果
-            shootSound = Sounds.shootBig;// 射击声音
+            smokeEffect = UnFx.plasmaSmoke;
+            shootSound = Sounds.shootBig;
             limitRange();
             coolantMultiplier = 1.1f;
-            coolant = consumeCoolant(0.2f);
+            coolant = consumeCoolant(0.1f);
             researchCostMultiplier = 0.1f;
+        }};
+
+        proliferationCannon = new ItemTurret("proliferation-cannon") {{
+            requirements(Category.turret, with
+                    (Items.plastanium, 5,Items.phaseFabric, 3,Items.titanium, 10,Items.graphite, 5));
+            ammo(
+                    Items.sporePod, new BasicBulletType(2.5f, 5){{
+                        width = 7f;
+                        height = 9f;
+                        lifetime = 60f;
+                        ammoMultiplier = 3;
+                        collidesTiles = true;
+                        homingPower = 0.5f;
+                        homingRange = 24f;
+                        hitEffect = UnFx.hyperPlasia;
+                        status = UnStatusEffects.hyperPlasia;
+                        statusDuration = 600f;
+                        frontColor = Color.valueOf("98FB98"); // 前景颜色
+                        backColor = Color.valueOf("32CD32"); // 背景颜色
+                    }}
+            );
+
+            drawer = new DrawTurret(){{
+                parts.addAll(
+                        new RegionPart("-min"){{
+                        heatColor = Color.valueOf("00FF7F");
+                        heatProgress = PartProgress.warmup;
+                        moveY = -0.5f;
+                        }}
+                );
+            }};
+            size = 1;
+            health = 100;
+            targetAir = false;
+            reload = 60f;
+            recoil = 1f;
+            range = 400f;
+            inaccuracy = 2f;
+            shootCone = 15f;
+            rotateSpeed = 8f;
+            itemCapacity = 5;
+            ammoUseEffect = Fx.none;
+            researchCostMultiplier = 0.1f;
+            limitRange();
+
         }};
         //endregion turret
 
         //region core
         universeCore = new CoreBlock("universe-core"){{
             requirements(Category.effect, BuildVisibility.editorOnly,
-                    ItemStack.with(Items.copper, 10000, Items.lead, 10000));
+                    with(Items.copper, 10000, Items.lead, 10000));
             alwaysUnlocked = true;
             isFirstTier = true;
             unitType = alpha;
