@@ -153,13 +153,13 @@ public class UnBlocks {
                         ammoMultiplier = 1f; // 弹药倍率
                         homingPower = 0.05f; // 追踪能力
                         homingRange = 24f; // 追踪范围
-                        hitEffect = UnFx.bronzerBlastExplosion; // 命中效果
+                        hitEffect = UnFx.bronzerHit; // 命中效果
                         status = UnStatusEffects.tetanus; // 状态效果
                         statusDuration = 500f; // 状态持续时间
                         frontColor = Color.valueOf("96CDCD"); // 前景颜色
                         backColor = Color.valueOf("668B8B"); // 背景颜色
                         makeFire = true; // 是否产生火焰
-                        trailEffect = UnFx.bronzerIncendTrail; // 炮弹轨迹效果
+                        trailEffect = UnFx.bronzerTrail; // 炮弹轨迹效果
                     }}
             );
             //shoot = new ShootAlternate(50f);炮口偏移
@@ -194,7 +194,7 @@ public class UnBlocks {
             health = 400; // 生命值
             rotateSpeed = 4f; // 转向速度
             itemCapacity = 9; // 弹药容量
-            shootEffect = UnFx.bronzerFire; // 射击效果
+            shootEffect = UnFx.bronzerShoot; // 射击效果
             shootSound = Sounds.bang; // 射击声音
             //coolant = consumeCoolant(0.1f);
             limitRange(0f); // 限制射程
@@ -221,16 +221,16 @@ public class UnBlocks {
                         makeFire = false;
                         trailRotation = true;
                         trailInterval = 3f;
-                        trailEffect = UnFx.plasmatrail;
-                        hitEffect = UnFx.plasmahit;
+                        trailEffect = UnFx.plasmaTrail;
+                        hitEffect = UnFx.plasmaHit;
                         intervalBullet = new LightningBulletType(){{
                         damage = 3;
                         collidesAir = false;
                         ammoMultiplier = 1f;
+                        buildingDamageMultiplier = 0.1f;
                         lightningColor = Color.valueOf("00BFFF");
                         lightningLength = 1;
                         lightningLengthRand = 5;
-                        buildingDamageMultiplier = 0.1f;
                         lightningType = new BulletType(0.0001f, 0f){{
                             lifetime = Fx.lightning.lifetime;
                             despawnEffect = Fx.none;
@@ -274,10 +274,11 @@ public class UnBlocks {
             ammoUseEffect = Fx.casing2;
             scaledHealth = 100;
             smokeEffect = UnFx.plasmaSmoke;
+            shootEffect = UnFx.plasmaShoot;
             shootSound = Sounds.shootBig;
             limitRange();
-            coolantMultiplier = 1.1f;
-            coolant = consumeCoolant(0.1f);
+            coolantMultiplier = 5f;//1:8
+            coolant = consumeCoolant(0.2f);//0.2*60f=12liquids/s
             researchCostMultiplier = 0.1f;
         }};
 
@@ -293,7 +294,7 @@ public class UnBlocks {
                         collidesTiles = true;
                         homingPower = 0.5f;
                         homingRange = 24f;
-                        hitEffect = UnFx.hyperPlasia;
+                        hitEffect = UnFx.proilHit;
                         status = UnStatusEffects.hyperPlasia;
                         statusDuration = 600f;
                         frontColor = Color.valueOf("98FB98"); // 前景颜色
@@ -318,6 +319,7 @@ public class UnBlocks {
             range = 400f;
             inaccuracy = 2f;
             shootCone = 15f;
+            shootEffect = UnFx.proliShoot;
             rotateSpeed = 8f;
             itemCapacity = 5;
             ammoUseEffect = Fx.none;

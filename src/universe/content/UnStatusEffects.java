@@ -23,7 +23,7 @@ public class UnStatusEffects {
 
                 affinity(tarred, (unit, result, time) -> {
                     unit.damagePierce(transitionDamage);
-                    UnFx.bronzerFire.at(unit.x + Mathf.range(unit.bounds() / 2f), unit.y + Mathf.range(unit.bounds() / 2f));
+                    UnFx.bronzerShoot.at(unit.x + Mathf.range(unit.bounds() / 2f), unit.y + Mathf.range(unit.bounds() / 2f));
                     result.set(tetanus, Math.min(time + result.time, 300f));
                 });
             });

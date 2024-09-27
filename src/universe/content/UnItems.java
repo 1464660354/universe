@@ -11,7 +11,7 @@ public class UnItems {
     // meltSol,starstripes,doomIngots,duvuPowder,parentCalciumBody,denseNucleus,vaticanCity
     // abundantDust,zincBaseAlloy,rareEarthElement;
     public static void load() {
-        //initialize bronzer
+
         bronzer = new Item("bronzer", Color.valueOf("92DD7EFF")){
             {
                 hardness = 2;
@@ -22,7 +22,7 @@ public class UnItems {
                 flammability = 0.1f;
             }
         };
-        //initialize aurum
+
         aurum = new Item("aurum", Color.valueOf("F3E979FF")){
             {
                 hardness = 3;
@@ -31,6 +31,6 @@ public class UnItems {
                 charge = 1.0f;
             }
         };
-        //initialize ...
+
     }
 }
