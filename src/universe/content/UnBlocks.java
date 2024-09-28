@@ -2,31 +2,22 @@ package universe.content;
 
 
 import arc.graphics.Color;
-import arc.math.Mathf;
 import mindustry.content.Fx;
 import mindustry.content.Items;
 import mindustry.content.Liquids;
 import mindustry.content.StatusEffects;
-import mindustry.entities.Effect;
-import mindustry.entities.bullet.ArtilleryBulletType;
-import mindustry.entities.bullet.BasicBulletType;
-import mindustry.entities.bullet.BulletType;
-import mindustry.entities.bullet.LightningBulletType;
-import mindustry.entities.effect.MultiEffect;
+import mindustry.entities.bullet.*;
+import mindustry.entities.part.DrawPart;
 import mindustry.entities.part.RegionPart;
-import mindustry.entities.pattern.ShootAlternate;
 import mindustry.gen.Sounds;
-import mindustry.graphics.Drawf;
-import mindustry.graphics.Pal;
 import mindustry.type.Category;
-import mindustry.type.StatusEffect;
 import mindustry.world.blocks.defense.Wall;
+import mindustry.world.blocks.defense.turrets.ContinuousLiquidTurret;
 import mindustry.world.blocks.defense.turrets.ItemTurret;
-import mindustry.world.blocks.environment.OreBlock;
+import mindustry.world.blocks.defense.turrets.LaserTurret;
 import mindustry.world.blocks.production.Drill;
 import mindustry.world.blocks.production.GenericCrafter;
 import mindustry.world.blocks.storage.CoreBlock;
-import mindustry.world.consumers.ConsumeLiquid;
 import mindustry.world.draw.DrawDefault;
 import mindustry.world.draw.DrawFlame;
 import mindustry.world.draw.DrawMulti;
@@ -34,10 +25,9 @@ import mindustry.world.draw.DrawTurret;
 import mindustry.world.meta.*;
 import mindustry.type.ItemStack;
 import mindustry.world.Block;
+import universe.UnBulletType.UnNoYaBulletType;
+import mindustry.entities.bullet.ContinuousBulletType;
 
-import universe.content.UnItems;
-
-import static arc.graphics.g2d.Draw.color;
 import static mindustry.content.UnitTypes.alpha;
 import static mindustry.type.ItemStack.with;
 
@@ -60,7 +50,7 @@ public class UnBlocks {
             //endregion
 
             //region turret
-            bronzeAncientCannon,plasmaCannon,proliferationCannon,
+            bronzeAncientCannon,plasmaCannon,proliferationCannon,refractiveNoYa,
             //endregion
 
             //region core
@@ -273,6 +263,7 @@ public class UnBlocks {
             itemCapacity = 15;
             ammoUseEffect = Fx.casing2;
             scaledHealth = 100;
+            loopSoundVolume = 1f;
             smokeEffect = UnFx.plasmaSmoke;
             shootEffect = UnFx.plasmaShoot;
             shootSound = Sounds.shootBig;
@@ -319,13 +310,77 @@ public class UnBlocks {
             range = 400f;
             inaccuracy = 2f;
             shootCone = 15f;
-            shootEffect = UnFx.proliShoot;
+            loopSoundVolume = 1f;
             rotateSpeed = 8f;
             itemCapacity = 5;
             ammoUseEffect = Fx.none;
             researchCostMultiplier = 0.1f;
             limitRange();
 
+        }};
+
+        refractiveNoYa = new ContinuousLiquidTurret("refractive-NoYa") {{
+            requirements(Category.turret, with
+                    (Items.graphite,240,Items.silicon, 200, Items.plastanium, 100,
+                            Items.phaseFabric, 50, Items.surgeAlloy, 75));
+            ammo(
+                    Liquids.water, new UnNoYaBulletType(30){{//30*120f=360s
+                length = 565f;
+                knockback = 1f;
+                pierceCap = 4;
+                buildingDamageMultiplier = 0.1f;
+                colors = new Color[]{
+                        Color.valueOf("eb7abe").a(0.55f),
+                        Color.valueOf("e189f5").a(0.7f),
+                        Color.valueOf("907ef7").a(0.8f),
+                        Color.valueOf("91a4ff"), Color.white};
+            }}
+            );
+            drawer = new DrawTurret("reinforced-") {{
+                parts.addAll(
+                    new RegionPart("-front"){{
+                        heatColor = Color.valueOf("e189f5");
+                        heatProgress = DrawPart.PartProgress.warmup;
+                        progress = PartProgress.warmup;
+                        mirror = true;
+                        moveRot = 45f;
+                    }},
+                    new RegionPart("-beck"){{
+                        heatColor = Color.valueOf("eb7abe");
+                        heatProgress = DrawPart.PartProgress.warmup;
+                        progress = PartProgress.warmup;
+                        mirror = true;
+                        moveRot = 45f;
+                    }},
+//                    new RegionPart("-min"){{
+//                        heatColor = Color.valueOf("668B8B");
+//                        heatProgress = DrawPart.PartProgress.warmup;
+//                        progress = PartProgress.warmup;
+//                        mirror = false;
+//                        moveY = 1f;
+//                    }},
+                    new RegionPart("-fire"){{
+                        heatColor = Color.valueOf("907ef7");
+                        heatProgress = DrawPart.PartProgress.warmup;
+                        progress = PartProgress.warmup;
+                        mirror = true;
+                        moveX = 10f;
+                        moveY = 10f;
+                    }}
+                );
+            }};
+            recoil = 0.5f;
+            size = 5;
+            shake = 2f;
+            range = 560f;
+            loopSoundVolume = 1f;
+            liquidConsumed = 15f / 60f;
+            heatColor = Color.valueOf("668B8B");
+            shootCone = 40f;
+            scaledHealth = 40;
+            shootSound = Sounds.laserbig;
+            loopSound = Sounds.beam;
+            envEnabled |= Env.space;
         }};
         //endregion turret
 

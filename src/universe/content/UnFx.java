@@ -4,22 +4,14 @@ import arc.graphics.Color;
 import arc.graphics.g2d.Draw;
 import arc.graphics.g2d.Fill;
 import arc.graphics.g2d.Lines;
-import arc.math.Angles;
 import arc.math.Mathf;
 import arc.math.Rand;
-import arc.math.geom.Position;
 import arc.math.geom.Vec2;
-import arc.util.Structs;
 import arc.util.Time;
 import arc.util.Tmp;
 import mindustry.entities.Effect;
-import mindustry.entities.abilities.ShieldArcAbility;
-import mindustry.entities.pattern.ShootPattern;
-import mindustry.gen.Unit;
 import mindustry.graphics.Drawf;
 import mindustry.graphics.Pal;
-import mindustry.world.blocks.defense.turrets.ItemTurret;
-import mindustry.world.blocks.defense.turrets.Turret;
 
 import static arc.graphics.Gl.alpha;
 import static arc.graphics.g2d.Draw.color;
@@ -34,12 +26,11 @@ public class UnFx {
 
     //region status effects
     tetanus = new Effect(40f, e -> {
-color(Color.valueOf("96CDCD"), Color.valueOf("668B8B"), e.fin());
-randLenVectors(e.id, 3, 2f + e.fin() * 7f, (x, y) -> {
-    Fill.circle(e.x + x, e.y + y, 0.1f + e.fout() * 1.4f);
-});
-}),
-
+        color(Color.valueOf("96CDCD"), Color.valueOf("668B8B"), e.fin());
+        randLenVectors(e.id, 3, 2f + e.fin() * 7f, (x, y) -> {
+            Fill.circle(e.x + x, e.y + y, 0.1f + e.fout() * 1.4f);
+        });
+    }),
     hyperPlasia = new Effect(600f, e -> {
         color(Color.valueOf("98FB98"), Color.valueOf("32CD32"), e.fin());
         randLenVectors(e.id, 3, 2f + e.fin() * 7f, (x, y) -> {
@@ -122,21 +113,45 @@ randLenVectors(e.id, 3, 2f + e.fin() * 7f, (x, y) -> {
         Lines.endLine();
     }),
 
-    proliShoot = new Effect(45f, e -> {
-        color(Color.valueOf("98FB98"), alpha);
-        Lines.poly(e.x, e.y, 6, e.finpow() * 5, 0.5F);
-    }),
     proilHit = new Effect(60f, e -> {
         color(Color.valueOf("98FB98"), Color.valueOf("32CD32"), e.fin());
         randLenVectors(e.id, 3, 2f + e.fin() * 7f, (x, y) -> {
             Fill.circle(e.x + x, e.y + y, 0.1f + e.fout() * 1.4f);
         });
     }),
+
     //endregion
 
 
+    //飞行尾焰
+    AEffect =new Effect(100f, e -> {
+                int divisions = 5,realLength = 10;
+                float width = 3.7f, oscScl = 1.2f, oscMag = 0.02f;
+                float[] lengthWidthPans = {
+                        1.12f, 1.3f, 0.32f,
+                        1f, 1f, 0.3f,
+                        0.8f, 0.9f, 0.2f,
+                        0.5f, 0.8f, 0.15f,
+                        0.25f, 0.7f, 0.1f,
+                };
+                float sin = Mathf.sin(Time.time, oscScl, oscMag);;
+                Color[] colors = {
+                        Color.valueOf("eb7abe").a(0.55f),
+                        Color.valueOf("e189f5").a(0.7f),
+                        Color.valueOf("907ef7").a(0.8f),
+                        Color.valueOf("91a4ff"),
+                        Color.white.cpy()};
+                for(int i = 0; i < 4; i++){
+                    Draw.color(colors[i].write(Tmp.c1).mul(0.9f).mul(1f + Mathf.absin(Time.time, 1f, 0.1f)));
+                    Drawf.flame(e.x , e.y - 40, divisions, e.rotation+180,
+                            realLength * lengthWidthPans[i * 3] * (1f - sin),
+                            width * lengthWidthPans[i * 3 + 1] * (1f + sin),
+                            lengthWidthPans[i * 3 + 2]
+                    );
+                }
+            }),
     //双重光环
-    arcShootEffect = new Effect(61f, e -> {
+    BEffect = new Effect(61f, e -> {
         float x = 0,y = 0,effectRadius = 5f,blinkScl = 20f,blinkSize = 0.1f,
                 sectors = 5,rotateSpeed = 5f,sectorRad = 0.14f, range=60,curStroke =1;
         Tmp.v1.trns(e.rotation , x, y - 4).add(e.x, e.y);
@@ -156,7 +171,6 @@ randLenVectors(e.id, 3, 2f + e.fin() * 7f, (x, y) -> {
                 Lines.arc(rx, ry, range, sectorRad, rot);
             }
         }
-
         /*球型
         Fill.circle(rx, ry, orbRadius);
         Draw.color();
@@ -165,6 +179,11 @@ randLenVectors(e.id, 3, 2f + e.fin() * 7f, (x, y) -> {
         Drawf.light(rx, ry, range * 1.5f, Color.valueOf("668B8B"), curStroke * 0.5f);
         Draw.reset();*/
     }),
+    //六边形光环
+    CEffect = new Effect(45f, e -> {
+                color(Color.valueOf("98FB98"), alpha);
+                Lines.poly(e.x, e.y, 6, e.finpow() * 5, 0.5F);
+            }),
         /*废弃案例
         Lines.arc(e.x, e.y, 2f, 100 / 200f, 5f);
         Lines.arc(e.x, e.y, 3f, 220 / 320f, 8f);
@@ -173,5 +192,4 @@ randLenVectors(e.id, 3, 2f + e.fin() * 7f, (x, y) -> {
         Lines.arc(e.x, e.y, 10f, 10f, e.finpow() * 10, 90);
         Lines.arc(e.x, e.y, 10f, 10f, e.finpow() * 10, 20);*/
     none = new Effect(0, 0f, e -> {});
-
 }
