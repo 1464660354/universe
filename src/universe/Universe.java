@@ -11,9 +11,9 @@ public class Universe extends Mod {
         MOD = Vars.mods.getMod(this.getClass());
         Log.info("Loading some universe content.");
         UnStatusEffects.load();
+        UnUnitTypes.load();
         UnItems.load();
         UnBlocks.load();
-        UnUnitTypes.load();
         UnPlanets.load();
         LuoPingPresets.load();
         UnTechTree.load();

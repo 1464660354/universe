@@ -4,6 +4,7 @@ import mindustry.content.TechTree;
 
 import static universe.content.LuoPingPresets.beBorn;
 import static universe.content.UnBlocks.universeCore;
+import static universe.content.UnUnitTypes.dragonClaws;
 
 public class UnTechTree {
 
@@ -24,7 +25,9 @@ public class UnTechTree {
                     });
                 });
             });
-            TechTree.node(UnBlocks.armyCorps, () -> {});
+            TechTree.node(UnBlocks.armyCorps, () -> {
+                TechTree.node(UnUnitTypes.dragonClaws, () -> {});
+            });
             TechTree.node(LuoPingPresets.beBorn, () -> {});
         });
     }
