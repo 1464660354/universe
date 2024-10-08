@@ -25,7 +25,9 @@ import mindustry.world.meta.*;
 import mindustry.type.ItemStack;
 import mindustry.world.Block;
 
-import universe.UnBulletType.UnNoYaBulletType;
+import universe.UnNoYaBulletType;
+import universe.UnNoYaShoot;
+
 
 import static mindustry.content.UnitTypes.alpha;
 import static mindustry.type.ItemStack.with;
@@ -72,7 +74,13 @@ public class UnBlocks {
 
     //region core
 
-    universeCore;
+    universeCore,
+
+    //endregion
+
+    //region Pad
+
+    UnLaunch;
 
     //endregion
 
@@ -357,6 +365,7 @@ public static void load(){
                 };
             }}
         );
+        shoot = new UnNoYaShoot(3, 0);
         drawer = new DrawTurret("reinforced-") {{
             parts.addAll(
                 new RegionPart("-front"){{
@@ -428,6 +437,20 @@ public static void load(){
     }};
 
     //endregion unit
+
+    //region Pad
+
+    /*UnLaunch = new UnLaunchPad("UnLaunch") {{
+        requirements(Category.effect, BuildVisibility.campaignOnly, with
+            (Items.copper, 350, Items.silicon, 140, Items.lead, 200, Items.titanium, 150));
+        size = 3;
+        itemCapacity = 100;
+        launchTime = 60f * 20;
+        hasPower = true;
+        consumePower(4f);
+    }};*/
+
+    //endregion
 
     }
 }
