@@ -13,8 +13,10 @@ import arc.util.Tmp;
 import mindustry.entities.Effect;
 import mindustry.game.Team;
 import mindustry.graphics.Drawf;
+import mindustry.graphics.Layer;
 import mindustry.graphics.Pal;
 import mindustry.type.StatusEffect;
+import universe.UnPal;
 
 import static arc.graphics.Gl.alpha;
 import static arc.graphics.g2d.Draw.color;
@@ -30,7 +32,7 @@ public class UnFx {
     //region status effects
 
     tetanus = new Effect(40f, e -> {
-        color(Color.valueOf("96CDCD"), Color.valueOf("668B8B"), e.fin());
+        color(UnPal.bronzerBullet, UnPal.bronzerBulletBack, e.fin());
         randLenVectors(e.id, 3, 2f + e.fin() * 7f, (x, y) -> {
             Fill.circle(e.x + x, e.y + y, 0.1f + e.fout() * 1.4f);
         });
@@ -41,19 +43,26 @@ public class UnFx {
             Fill.circle(e.x + x, e.y + y, 0.1f + e.fout() * 1.4f);
         });
     }),
+    erosion = new Effect(40f, e -> {
+        color(UnPal.sco);
+
+        randLenVectors(e.id, 2, 1f + e.fin() * 2f, (x, y) -> {
+            Fill.square(e.x + x, e.y + y, e.fslope() * 1.1f, 45f);
+        });
+    }),
 
     //endregion
 
     //region turret effects
 
     bronzerShoot = new Effect(100f, e -> {
-        color(Color.valueOf("96CDCD"), Color.valueOf("668B8B"), e.fin());
+        color(UnPal.bronzerBullet, UnPal.bronzerBulletBack, e.fin());
         randLenVectors(e.id, 10, e.finpow() * 23f, e.rotation, 25f, (x, y) -> {
             Fill.circle(e.x + x, e.y + y, e.fout() * 6f + 0.3f);
         });
     }),
     bronzerHit = new Effect(30, e -> {
-        color(Color.valueOf("96CDCD"));
+        color(UnPal.bronzerBullet);
         e.scaled(6, i -> {
             stroke(3f * i.fout());
             Lines.circle(e.x, e.y, 3f + i.fin() * 15f);
@@ -62,7 +71,7 @@ public class UnFx {
         randLenVectors(e.id, 5, 2f + 23f * e.finpow(), (x, y) -> {
             Fill.circle(e.x + x, e.y + y, e.fout() * 4f + 0.5f);
         });
-        color(Color.valueOf("668B8B"));
+        color(UnPal.bronzerBulletBack);
         stroke(e.fout());
         randLenVectors(e.id + 1, 4, 1f + 23f * e.finpow(), (x, y) -> {
             lineAngle(e.x + x, e.y + y, Mathf.angle(x, y), 1f + e.fout() * 3f);
@@ -70,12 +79,12 @@ public class UnFx {
         Drawf.light(e.x, e.y, 45f, Pal.missileYellowBack, 0.8f * e.fout());
     }),
     bronzerTrail = new Effect(60, e -> {
-        color(Color.valueOf("96CDCD"), Color.valueOf("668B8B"), e.fin());
+        color(UnPal.bronzerBullet, UnPal.bronzerBulletBack, e.fin());
         Fill.circle(e.x, e.y, e.rotation * e.fout());
     }),
 
     plasmaHit = new Effect(120, e -> {
-        color(Color.valueOf("96CDCD"), Color.valueOf("668B8B"), e.fin());
+        color(UnPal.bronzerBullet, UnPal.bronzerBulletBack, e.fin());
         stroke(e.fout() * 0.3f);
         randLenVectors(e.id, 18, e.finpow() * 27f, e.rotation, 360f, (x, y) -> {
             float ang = Mathf.angle(x, y);
@@ -83,20 +92,20 @@ public class UnFx {
         });
     }),
     plasmaSmoke = new Effect(45f, e -> {
-        color(Color.valueOf("96CDCD"), Color.lightGray, Color.gray, e.fin());
+        color(UnPal.bronzerBullet, Color.lightGray, Color.gray, e.fin());
         randLenVectors(e.id, 9, e.finpow() * 10f, e.rotation, 20f, (x, y) -> {
             Fill.circle(e.x + x, e.y + y, e.fout() * 1.2f + 0.2f);
         });
     }),
     plasmaTrail = new Effect(20f, e -> {
-        color(Color.valueOf("96CDCD"), Color.valueOf("668B8B"), e.fin());
+        color(UnPal.bronzerBullet, UnPal.bronzerBulletBack, e.fin());
         for(int s : Mathf.signs){
             Drawf.tri(e.x, e.y, 1f, 5f * e.fslope(), e.rotation + 90f*s);
         }
     }),
     plasmaShoot = new Effect(40f, 40f, e -> {
         stroke(1.1f * e.fout());
-        color(Color.valueOf("96CDCD"), e.color, e.fin());
+        color(UnPal.bronzerBullet, e.color, e.fin());
         Lines.beginLine();
         Lines.linePoint(e.x, e.y);
         rand.setSeed(e.id);
@@ -117,6 +126,15 @@ public class UnFx {
             Fill.circle(e.x + x, e.y + y, 0.1f + e.fout() * 1.4f);
         });
     }),
+
+    //endregion
+    
+    //unit effects
+
+    scorpionTrail = new Effect(50, e -> {
+        color(e.color);
+        Fill.poly(e.x, e.y, 8, 15, 0);
+    }).layer(Layer.bullet - 0.001f),
 
     //endregion
 
@@ -155,7 +173,7 @@ public class UnFx {
         float rx = Tmp.v1.x, ry = Tmp.v1.y;
         float orbRadius = effectRadius * (1f + Mathf.absin(blinkScl, blinkSize));
         //Inner ring
-        Lines.stroke((0.7f + Mathf.absin(blinkScl, 0.7f)), Color.valueOf("96CDCD"));
+        Lines.stroke((0.7f + Mathf.absin(blinkScl, 0.7f)), UnPal.bronzerBullet);
         for(int i = 0; i < sectors; i++){
             float rot = e.rotation + i * 360f/sectors - Time.time * rotateSpeed;
             Lines.arc(rx, ry, orbRadius + 3f, sectorRad, rot);
@@ -173,7 +191,7 @@ public class UnFx {
         Draw.color();
         Fill.circle(rx, ry, orbRadius / 2f);
         //luminous
-        Drawf.light(rx, ry, range * 1.5f, Color.valueOf("668B8B"), curStroke * 0.5f);
+        Drawf.light(rx, ry, range * 1.5f, UnPal.bronzerBulletBack, curStroke * 0.5f);
         Draw.reset();*/
     }),
     //Hexagonal aura
@@ -186,7 +204,7 @@ public class UnFx {
     Lines.arc(e.x, e.y, 2f, 100 / 200f, 5f);
     Lines.arc(e.x, e.y, 3f, 220 / 320f, 8f);
     Lines.arc(e.x, e.y, 4f, 340 / 80f, 10f);
-    Draw.color(Color.valueOf("96CDCD"),e.fin());
+    Draw.color(UnPal.bronzerBullet,e.fin());
     Lines.arc(e.x, e.y, 10f, 10f, e.finpow() * 10, 90);
     Lines.arc(e.x, e.y, 10f, 10f, e.finpow() * 10, 20);*/
 

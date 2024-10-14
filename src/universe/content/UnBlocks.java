@@ -8,36 +8,41 @@ import mindustry.content.*;
 import mindustry.entities.bullet.*;
 import mindustry.entities.part.DrawPart;
 import mindustry.entities.part.RegionPart;
+import mindustry.gen.ClearItemsCallPacket;
 import mindustry.gen.Sounds;
 import mindustry.type.Category;
+import mindustry.type.UnitType;
 import mindustry.world.blocks.defense.Wall;
 import mindustry.world.blocks.defense.turrets.ContinuousLiquidTurret;
 import mindustry.world.blocks.defense.turrets.ItemTurret;
+import mindustry.world.blocks.environment.OreBlock;
 import mindustry.world.blocks.production.Drill;
 import mindustry.world.blocks.production.GenericCrafter;
 import mindustry.world.blocks.storage.CoreBlock;
+import mindustry.world.blocks.units.Reconstructor;
 import mindustry.world.blocks.units.UnitFactory;
-import mindustry.world.draw.DrawDefault;
-import mindustry.world.draw.DrawFlame;
-import mindustry.world.draw.DrawMulti;
-import mindustry.world.draw.DrawTurret;
+import mindustry.world.draw.*;
 import mindustry.world.meta.*;
 import mindustry.type.ItemStack;
 import mindustry.world.Block;
 
-import universe.UnNoYaBulletType;
-import universe.UnNoYaShoot;
+import universe.UnPal;
+import universe.Untype.DrawGraphite;
+import universe.Untype.UnNoYaBulletType;
+import universe.Untype.UnNoYaShoot;
+import universe.Untype.UnOreBlock;
 
 
 import static mindustry.content.UnitTypes.alpha;
 import static mindustry.type.ItemStack.with;
+import static universe.content.UnItems.aurum;
 
 public class UnBlocks {
     public static Block
 
     //region ore
 
-    oreAurum,
+    oreAurum,oreHuoJiangStone,oreCohenite,
 
     //endregion
 
@@ -55,7 +60,7 @@ public class UnBlocks {
 
     //region Smelter
 
-    bronzerSmelter,
+    bronzerSmelter,carbonizationMechanism,structuralEquipment,
 
     //endregion
 
@@ -68,7 +73,7 @@ public class UnBlocks {
 
     //region unit
 
-    armyCorps,
+    armyCorps,causalLevelBuilder,
 
     //endregion
 
@@ -85,13 +90,26 @@ public class UnBlocks {
     //endregion
 
 public static void load(){
+
     //region ore
 
-//        oreAurum = new OreBlock(UnItems.aurum){{
-//            oreDefault = true;
-//            oreThreshold = 0.864f;
-//            oreScale = 24.904762f;
-//        }};
+    oreAurum = new UnOreBlock("ore-aurum",UnItems.aurum){{
+        oreDefault = true;
+        oreThreshold = 0.899f;
+        oreScale = 25.28378f;
+    }};
+
+    oreHuoJiangStone = new UnOreBlock("ore-huojiang-stone",UnItems.huojiangStone){{
+        oreDefault = true;
+        oreThreshold = 0.887f;
+        oreScale = 25.38344f;
+    }};
+
+    oreCohenite = new UnOreBlock("ore-cohenite",UnItems.cohenite){{
+        oreDefault = true;
+        oreThreshold = 0.882f;
+        oreScale = 25.39644f;
+    }};
 
     //endregion ore
 
@@ -140,18 +158,54 @@ public static void load(){
         requirements(Category.crafting, with
             (Items.copper, 20, Items.lead, 30));
         craftEffect = Fx.smeltsmoke;
+        health = 400;
         outputItem = new ItemStack(UnItems.bronzer, 1);
         craftTime = 35f;//35*0.0165f=0.5775s    0.58s
         size = 2;
         hasPower = true;
         hasLiquids = false;
-        drawer = new DrawMulti(new DrawDefault(), new DrawFlame(Color.valueOf("00FF80")));
-        //ambientSound = Sounds.smelter;
-        //ambientSoundVolume = 0.09f;
+        drawer = new DrawMulti(new DrawRegion("-bottom"),new DrawFlame(Color.valueOf("00FF80")),
+                new DrawDefault());
         consumeItems(with(Items.copper, 2, Items.lead, 1));
         consumePower(0.30f);//0.30*60f=18power/s
         researchCostMultiplier = 0.1f;
         envDisabled |= Env.scorching;
+    }};
+    carbonizationMechanism = new GenericCrafter("carbonization-mechanism"){{
+        requirements(Category.crafting, with
+                (Items.copper, 500, Items.lead, 300, UnItems.aurum, 15, UnItems.cohenite, 30));
+        craftEffect = Fx.pulverizeMedium;
+        health = 500;
+        outputItem = new ItemStack(UnItems.graphene, 4);
+        craftTime = 300f;//300*0.0165f=5.18s    5.2s
+        size = 3;
+        hasItems = true;
+        hasPower = true;
+        hasLiquids = false;
+        drawer = new DrawMulti(new DrawRegion("-bottom"),
+                new DrawGraphite(),new DrawDefault());
+        consumeItems(with(Items.graphite, 6, Items.coal, 10));
+        consumePower(3f);//30*60f=180power/s
+        researchCostMultiplier = 0.1f;
+    }};
+    structuralEquipment = new GenericCrafter("structural-equipment"){{
+        requirements(Category.crafting, with
+                (Items.copper, 500, Items.lead, 300, Items.titanium, 150, UnItems.cohenite, 15));
+        craftEffect = Fx.pulverizeMedium;
+        health = 600;
+        outputItem = new ItemStack(UnItems.flowingPhosphorusIngot, 1);
+        craftTime = 300f;//300*0.0165f=5.18s    5.2s
+        size = 4;
+        hasItems = true;
+        hasPower = true;
+        hasLiquids = true;
+        drawer = new DrawMulti(new DrawRegion("-bottom"),
+                new DrawFlame(Color.valueOf("B7DA00FF")),new DrawDefault());
+        consumeItems(with( Items.lead, 10,Items.surgeAlloy, 2,UnItems.graphene, 5));
+        consumePower(5f);//30*60f=180power/s
+        liquidCapacity = 90f;
+        consumeLiquid(Liquids.cryofluid, 0.5f);//0.5*60f=30
+        researchCostMultiplier = 0.1f;
     }};
 
     //endregion smelter
@@ -176,8 +230,8 @@ public static void load(){
                     hitEffect = UnFx.bronzerHit;
                     status = UnStatusEffects.tetanus;
                     statusDuration = 500f;
-                    frontColor = Color.valueOf("96CDCD");
-                    backColor = Color.valueOf("668B8B");
+                    frontColor = UnPal.bronzerBullet;
+                    backColor = UnPal.bronzerBulletBack;
                     makeFire = true;
                     trailEffect = UnFx.bronzerTrail;
                 }}
@@ -186,18 +240,18 @@ public static void load(){
         drawer = new DrawTurret("reinforced-"){{
             parts.addAll(
                     new RegionPart("-end"){{
-                        heatColor = Color.valueOf("668B8B");
+                        heatColor = UnPal.bronzerBulletBack;
                         heatProgress = PartProgress.warmup;
                         moveY = 0f;
                     }},
                     new RegionPart("-front"){{
-                        heatColor = Color.valueOf("96CDCD");
+                        heatColor = UnPal.bronzerBullet;
                         heatProgress = PartProgress.warmup;
                         mirror = true;
                         moveX = -1f;
                     }},
                     new RegionPart("-min"){{
-                        heatColor = Color.valueOf("96CDCD");
+                        heatColor = UnPal.bronzerBullet;
                         heatProgress = PartProgress.recoil;
                         moveY = -1f;
                     }}
@@ -236,8 +290,8 @@ public static void load(){
                 homingRange = 24f;
                 ammoMultiplier = 1;
                 statusDuration = 60f;
-                frontColor = Color.valueOf("96CDCD");
-                backColor = Color.valueOf("668B8B");
+                frontColor = UnPal.bronzerBullet;
+                backColor = UnPal.bronzerBulletBack;
                 makeFire = false;
                 trailRotation = true;
                 trailInterval = 3f;
@@ -398,7 +452,7 @@ public static void load(){
         range = 560f;
         loopSoundVolume = 1f;
         liquidConsumed = 15f / 60f;
-        heatColor = Color.valueOf("668B8B");
+        heatColor = UnPal.bronzerBulletBack;
         shootCone = 40f;
         scaledHealth = 40;
         shootSound = Sounds.laserbig;
@@ -434,6 +488,27 @@ public static void load(){
         );
         size = 3;
         consumePower(1f);
+    }};
+    causalLevelBuilder = new Reconstructor("causal-level-builder"){{
+        requirements(Category.units, with
+                (Items.lead, 2000, Items.silicon, 1500,
+                        Items.thorium, 1000, Items.plastanium, 400,
+                        Items.phaseFabric, 200, Items.surgeAlloy, 1000,
+                        UnItems.cohenite,800,UnItems.graphene,500));
+
+        size = 5;
+        consumePower(25f);
+        consumeItems(with(Items.silicon, 500,
+                Items.plastanium, 300, Items.phaseFabric, 150,
+                Items.surgeAlloy, 800,UnItems.flowingPhosphorusIngot,50));
+        consumeLiquid(Liquids.cryofluid, 3f);
+
+        constructTime = 60f * 60f * 4 * 2;
+        liquidCapacity = 180f;
+
+        upgrades.addAll(
+                new UnitType[]{UnitTypes.toxopid, UnUnitTypes.scorpion}
+        );
     }};
 
     //endregion unit

@@ -6,9 +6,7 @@ import static universe.content.UnPlanets.luoPing;
 
 public class LuoPingPresets {
     public static SectorPreset
-            beBorn,grow,firstEncounter,proliferation,
-            multiply,multiplication,multivariant,normalize,
-            quiet,phantomKing;
+            beBorn;
 //    sector.universe-mod-grow.name = 成长
 //    sector.universe-mod-firstEncounter.name = 初遇
 //    sector.universe-mod-proliferation.name = 增殖

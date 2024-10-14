@@ -2,12 +2,16 @@ package universe.content;
 
 import arc.graphics.Color;
 import arc.math.Mathf;
+import mindustry.content.Fx;
+import mindustry.game.Team;
+import mindustry.graphics.Pal;
 import mindustry.type.StatusEffect;
+import universe.UnPal;
 
 import static mindustry.content.StatusEffects.*;
 
 public abstract class UnStatusEffects {
-    public static StatusEffect tetanus,hyperPlasia,flashStrike;
+    public static StatusEffect tetanus,hyperPlasia,flashStrike,erosion;
     public static void load(){
 
         tetanus = new StatusEffect("tetanus"){{
@@ -49,8 +53,18 @@ public abstract class UnStatusEffects {
 
         }};
 
+        erosion = new StatusEffect("erosion"){{
+            color = UnPal.sco;
+            speedMultiplier = 0.5f;
+            healthMultiplier = 0.6f;
+            effect = UnFx.erosion;
+            effectChance = 0.3f;
+        }};
+
         //@Override
         boss = new StatusEffect("boss"){{
+            damageMultiplier = 7f;
+            healthMultiplier = 10f;
             boss.damageMultiplier = 5f;
             boss.healthMultiplier = 5f;
         }};
